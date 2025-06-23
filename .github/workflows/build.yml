@@ -1,0 +1,46 @@
+name: Java i128 Atomic
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          gcc -std=c11 -O2 -fPIC -shared -o resources/natives/atomic128.so native_development/i128_atomic.c -latomic
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomic128-linux
+          path: ./resources/natives/atomic128.so
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          clang -std=c11 -O2 -dynamiclib -o resources/natives/atomic128.dylib native_development/i128_atomic.c
+      - name: Upload MacOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomic128-macos
+          path: ./resources/natives/atomic128.dylib
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up MSVC developer environment
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Build DLL with cl.exe
+        run: |
+          cl /LD /O2 /Fe:resources\\natives\\atomic128.dll native_development/i128_atomic.c
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomic128-windows
+          path: ./resources/natives/atomic128.dll
