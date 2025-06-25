@@ -2,18 +2,14 @@ package it.telami.commons.concurrency.atomic;
 
 import it.telami.commons.util.OperatingSystem;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
 
-import static java.lang.foreign.ValueLayout.JAVA_BOOLEAN;
-import static java.lang.foreign.ValueLayout.ADDRESS;
-import static java.lang.foreign.ValueLayout.JAVA_LONG;
+import static java.lang.foreign.ValueLayout.*;
 
 /**
  * Class representing an integer <b>128-bit</b> long supporting many atomic operations. <br>
@@ -99,10 +95,10 @@ public final class i128 extends Number implements Comparable<i128> {
                     .groupElement("low"));
 
     //Used for avoiding branches based on the byte order
-    private final VarHandle mostSignificantBits;
-    private final VarHandle leastSignificantBits;
+    private transient VarHandle mostSignificantBits;
+    private transient VarHandle leastSignificantBits;
     //Native memory segment
-    private final MemorySegment i128;
+    private transient MemorySegment i128;
 
 
     /**
@@ -728,5 +724,46 @@ public final class i128 extends Number implements Comparable<i128> {
 
     public int compareTo (final i128 o) {
         return i128.asByteBuffer().compareTo(o.i128.asByteBuffer());
+    }
+
+    @Serial
+    private void writeObject (final ObjectOutputStream out) throws IOException {
+        final byte[] state;
+        final ByteOrder order;
+        final VarHandle view;
+        (view = MethodHandles.byteArrayViewVarHandle(long[].class, order
+                = mostSignificantBits != i128_low
+                ? ByteOrder.BIG_ENDIAN
+                : ByteOrder.LITTLE_ENDIAN))
+                .set(state = new byte[17], 0, getHigh());
+        view.set(state, 8, getLow());
+        state[16] = order != ByteOrder.BIG_ENDIAN
+                ? (byte) 0
+                : (byte) 1;
+        out.write(state);
+    }
+    @Serial
+    private void readObject (final ObjectInputStream in) throws IOException {
+        if (in.available() != 0) {
+            final byte[] state = new byte[17];
+            if (in.read(state) != 17)
+                return;
+            i128 = defaultArena.allocate(I128);
+            final ByteOrder order;
+            final VarHandle view;
+            set((long) (view = MethodHandles.byteArrayViewVarHandle(long[].class, order
+                            = state[16] != 0
+                            ? ByteOrder.BIG_ENDIAN
+                            : ByteOrder.LITTLE_ENDIAN))
+                            .get(state, 0),
+                    (long) view.get(state, 8));
+            if (order != ByteOrder.LITTLE_ENDIAN) {
+                mostSignificantBits = i128_high;
+                leastSignificantBits = i128_low;
+            } else {
+                mostSignificantBits = i128_low;
+                leastSignificantBits = i128_high;
+            }
+        }
     }
 }
