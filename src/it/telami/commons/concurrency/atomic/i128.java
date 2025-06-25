@@ -547,6 +547,7 @@ public final class i128 extends Number implements Comparable<i128> {
      * Get as described in {@link VarHandle#getOpaque(Object...)}
      * the current value and put it in the given {@link i128 result container}.
      * @param result the result container
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @author Telami
      * @since 1.0.1
      */
@@ -561,6 +562,7 @@ public final class i128 extends Number implements Comparable<i128> {
      * Get as described in {@link VarHandle#getAcquire(Object...)}
      * the current value and put it in the given {@link i128 result container}.
      * @param result the result container
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @author Telami
      * @since 1.0.1
      */
@@ -575,6 +577,7 @@ public final class i128 extends Number implements Comparable<i128> {
      * Get as described in {@link VarHandle#getVolatile(Object...)}
      * the current value and put it in the given {@link i128 result container}.
      * @param result the result container
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @author Telami
      * @since 1.0.1
      */
@@ -616,6 +619,7 @@ public final class i128 extends Number implements Comparable<i128> {
      * @param newValue the value to set if the operation succeed
      * @return {@code true} if the current value matched with
      *         the <i>expected value</i>, {@code false} otherwise
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @see i128
      * @author Telami
      * @since 1.0.1
@@ -635,6 +639,7 @@ public final class i128 extends Number implements Comparable<i128> {
     /**
      * Set as described in {@link VarHandle#setOpaque(Object...)}.
      * @param newValue the new current value
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @see i128
      * @author Telami
      * @since 1.0.1
@@ -649,6 +654,7 @@ public final class i128 extends Number implements Comparable<i128> {
     /**
      * Set as described in {@link VarHandle#setRelease(Object...)}.
      * @param newValue the new current value
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @see i128
      * @author Telami
      * @since 1.0.1
@@ -663,6 +669,7 @@ public final class i128 extends Number implements Comparable<i128> {
     /**
      * Set as described in {@link VarHandle#setVolatile(Object...)}.
      * @param newValue the new current value
+     * @apiNote Not supported on {@link OperatingSystem#WINDOWS}
      * @see i128
      * @author Telami
      * @since 1.0.1
