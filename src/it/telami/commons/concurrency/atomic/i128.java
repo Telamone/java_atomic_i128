@@ -404,7 +404,6 @@ public final class i128 extends Number implements Comparable<i128> {
 
 
     private static final MethodHandle windows_compareAndSet_i128;
-    private static final UnsupportedOperationException windowsException;
     private static final MethodHandle getOpaque_i128;
     private static final MethodHandle getAcquire_i128;
     private static final MethodHandle getVolatile_i128;
@@ -477,7 +476,6 @@ public final class i128 extends Number implements Comparable<i128> {
                                     ADDRESS,
                                     ADDRESS,
                                     ADDRESS));
-            windowsException = new UnsupportedOperationException("Not supported on Windows!");
             getOpaque_i128 = OperatingSystem
                     .currentOS
                     != OperatingSystem
@@ -588,7 +586,7 @@ public final class i128 extends Number implements Comparable<i128> {
             getOpaque_i128.invokeExact(i128, result.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
     /**
      * Get as described in {@link VarHandle#getAcquire(Object...)}
@@ -603,7 +601,7 @@ public final class i128 extends Number implements Comparable<i128> {
             getAcquire_i128.invokeExact(i128, result.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
     /**
      * Get as described in {@link VarHandle#getVolatile(Object...)}
@@ -618,7 +616,7 @@ public final class i128 extends Number implements Comparable<i128> {
             getVolatile_i128.invokeExact(i128, result.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
 
     /**
@@ -665,7 +663,7 @@ public final class i128 extends Number implements Comparable<i128> {
                     newValue.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
 
     /**
@@ -681,7 +679,7 @@ public final class i128 extends Number implements Comparable<i128> {
             setOpaque_i128.invokeExact(i128, newValue.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
     /**
      * Set as described in {@link VarHandle#setRelease(Object...)}.
@@ -696,7 +694,7 @@ public final class i128 extends Number implements Comparable<i128> {
             setRelease_i128.invokeExact(i128, newValue.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
     /**
      * Set as described in {@link VarHandle#setVolatile(Object...)}.
@@ -711,7 +709,7 @@ public final class i128 extends Number implements Comparable<i128> {
             setVolatile_i128.invokeExact(i128, newValue.i128);
         } catch (final Throwable t) {
             throw new RuntimeException(t);
-        } else throw windowsException;
+        } else throw new UnsupportedOperationException("Not supported on Windows!");
     }
 
 
