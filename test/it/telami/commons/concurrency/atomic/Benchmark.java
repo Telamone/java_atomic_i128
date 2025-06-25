@@ -94,7 +94,6 @@ final class Benchmark {
 
     private static void withLockImpl () {
         final class i128 {
-            @SuppressWarnings("unused")
             private long high;
             private long low;
             private i128 () {

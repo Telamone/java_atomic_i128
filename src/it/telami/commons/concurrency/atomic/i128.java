@@ -2,6 +2,10 @@ package it.telami.commons.concurrency.atomic;
 
 import it.telami.commons.util.OperatingSystem;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
@@ -412,22 +416,50 @@ public final class i128 extends Number implements Comparable<i128> {
 
     static {
         try {
-            System.load(switch (OperatingSystem.currentOS) {
-                case WINDOWS -> //noinspection DataFlowIssue
-                        i128.class
-                                .getResource("/natives/atomic128.dll")
-                                .toURI()
-                                .getPath();
-                case LINUX -> //noinspection DataFlowIssue
-                        i128.class
-                                .getResource("/natives/atomic128.so")
-                                .toURI()
-                                .getPath();
-                case MAC -> //noinspection DataFlowIssue
-                        i128.class
-                                .getResource("/natives/atomic128.dylib")
-                                .toURI()
-                                .getPath();
+            final String path;
+            if ((path = i128
+                    .class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+                    .getPath()
+                    .substring(1))
+                    .endsWith(".jar")) {
+                String resource;
+                try (final InputStream is = i128.class.getResourceAsStream(resource
+                        = "/natives/"
+                        + switch (OperatingSystem.currentOS) {
+                    case WINDOWS -> "atomic128.dll";
+                    case LINUX -> "atomic128.so";
+                    case MAC -> "atomic128.dylib";
+                    default -> throw new IllegalStateException("Operating System not supported: " + OperatingSystem.currentOS);
+                })) {
+                    if (is != null) {
+                        final File f;
+                        if (!(f = new File(resource = path.substring(
+                                0,
+                                path.lastIndexOf('/') + 1)
+                                + "TelLib"
+                                + resource))
+                                .exists())
+                            if (f.getParentFile().mkdirs()) {
+                                if (!f.createNewFile())
+                                    throw new IllegalStateException("Cannot create base files!");
+                            } else throw new IllegalStateException("Cannot create directories!");
+                        try (final BufferedOutputStream bos = new BufferedOutputStream(
+                                new FileOutputStream(f),
+                                is.available())) {
+                            bos.write(is.readAllBytes());
+                            bos.flush();
+                        }
+                        System.load(resource);
+                    } else throw new IllegalStateException("Native files not found!");
+                }
+            } else System.load(path + switch (OperatingSystem.currentOS) {
+                case WINDOWS -> "atomic128.dll";
+                case LINUX -> "atomic128.so";
+                case MAC -> "atomic128.dylib";
                 default -> throw new IllegalStateException("Operating System not supported: " + OperatingSystem.currentOS);
             });
             final Linker linker = Linker.nativeLinker();
